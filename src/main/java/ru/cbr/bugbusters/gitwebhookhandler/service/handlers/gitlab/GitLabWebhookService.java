@@ -1,4 +1,4 @@
-package ru.cbr.bugbusters.gitwebhookhandler.service.handler.gitlab;
+package ru.cbr.bugbusters.gitwebhookhandler.service.handlers.gitlab;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.cbr.bugbusters.gitwebhookhandler.service.handler.gitlab.MergeRequestEventHandler;
+import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.gitlab.MergeRequestEventHandler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;

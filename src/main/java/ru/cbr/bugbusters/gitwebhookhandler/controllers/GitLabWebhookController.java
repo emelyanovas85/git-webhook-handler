@@ -1,6 +1,6 @@
-package ru.cbr.bugbusters.gitwebhookhandler.controller;
+package ru.cbr.bugbusters.gitwebhookhandler.controllers;
 
-import ru.cbr.bugbusters.gitwebhookhandler.service.handler.gitlab.GitLabWebhookService;
+import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.gitlab.GitLabWebhookService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

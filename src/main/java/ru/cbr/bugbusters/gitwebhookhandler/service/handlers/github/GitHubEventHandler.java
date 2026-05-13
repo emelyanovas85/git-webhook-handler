@@ -1,4 +1,4 @@
-package ru.cbr.bugbusters.gitwebhookhandler.service.handler.github;
+package ru.cbr.bugbusters.gitwebhookhandler.service.handlers.github;
 
 import ru.cbr.bugbusters.gitwebhookhandler.service.WebhookEventHandler;
 

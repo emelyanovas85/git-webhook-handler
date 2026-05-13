@@ -1,4 +1,4 @@
-package ru.cbr.bugbusters.gitwebhookhandler.exception;
+package ru.cbr.bugbusters.gitwebhookhandler.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

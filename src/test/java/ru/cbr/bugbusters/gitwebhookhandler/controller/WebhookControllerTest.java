@@ -1,6 +1,7 @@
 package ru.cbr.bugbusters.gitwebhookhandler.controller;
 
-import ru.cbr.bugbusters.gitwebhookhandler.service.handler.gitlab.GitLabWebhookService;
+import ru.cbr.bugbusters.gitwebhookhandler.controllers.GitLabWebhookController;
+import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.gitlab.GitLabWebhookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

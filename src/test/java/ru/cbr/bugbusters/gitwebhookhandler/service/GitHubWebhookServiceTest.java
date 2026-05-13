@@ -1,7 +1,7 @@
 package ru.cbr.bugbusters.gitwebhookhandler.service;
 
-import ru.cbr.bugbusters.gitwebhookhandler.service.handler.github.GitHubEventHandler;
-import ru.cbr.bugbusters.gitwebhookhandler.service.handler.github.GitHubWebhookService;
+import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.github.GitHubEventHandler;
+import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.github.GitHubWebhookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;

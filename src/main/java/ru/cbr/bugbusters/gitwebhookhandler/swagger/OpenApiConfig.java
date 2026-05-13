@@ -22,7 +22,7 @@ public class OpenApiConfig {
                                 Webhook Handler API
                                 """)
                         .description("""
-                                 <img src="/images/img.png" alt="Webhook Handler" width="100"/>
+                                 <img src="/images/img.png" alt="А шо ты хотел от тракториста?" width="100"/>
                                 
                                 
                                 ## Универсальный обработчик webhook-ов от GitLab и GitHub.

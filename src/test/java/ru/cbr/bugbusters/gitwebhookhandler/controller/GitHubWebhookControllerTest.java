@@ -1,6 +1,7 @@
 package ru.cbr.bugbusters.gitwebhookhandler.controller;
 
-import ru.cbr.bugbusters.gitwebhookhandler.service.handler.github.GitHubWebhookService;
+import ru.cbr.bugbusters.gitwebhookhandler.controllers.GitHubWebhookController;
+import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.github.GitHubWebhookService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
