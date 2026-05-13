@@ -5,12 +5,11 @@ Spring Boot приложение для приёма и обработки webho
 ## Технологии
 
 - **Java 21**
-- **Spring Boot 3.5.0**
-- **Spring Web MVC**
-- **Spring Validation**
-- **Spring Actuator**
-- **Lombok**
-- **Jackson**
+- **Spring Boot 4.0.6**
+- **Spring Framework 7.0.7**
+- **Gradle 8.14** (Kotlin DSL)
+- Spring Web MVC, Spring Validation, Spring Actuator
+- Lombok 1.18.46, Jackson
 
 ## Архитектура
 
@@ -36,13 +35,13 @@ WebhookService  ─── проверка токена безопасности
 ## Запуск
 
 ```bash
-./mvnw spring-boot:run
+./gradlew bootRun
 ```
 
 Либо с секретным токеном:
 
 ```bash
-GITLAB_WEBHOOK_SECRET_TOKEN=mysecret ./mvnw spring-boot:run
+GITLAB_WEBHOOK_SECRET_TOKEN=mysecret ./gradlew bootRun
 ```
 
 ## Эндпоинты
@@ -72,7 +71,7 @@ GITLAB_WEBHOOK_SECRET_TOKEN=mysecret ./mvnw spring-boot:run
 
 ## Добавление нового обработчика
 
-Создайте класс, реализующий `GitLabEventHandler`, и добавьте аннотацию `@Component`:
+Создайте класс, реализующий `GitLabEventHandler`, и добавьте `@Component`:
 
 ```java
 @Slf4j
@@ -100,5 +99,5 @@ Spring автоматически добавит его в список обра
 ## Тесты
 
 ```bash
-./mvnw test
+./gradlew test
 ```
