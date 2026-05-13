@@ -1,7 +1,6 @@
 package com.example.gitlabwebhookhandler.controller;
 
-import com.example.gitlabwebhookhandler.model.GitLabEvent;
-import com.example.gitlabwebhookhandler.service.WebhookService;
+import com.example.gitlabwebhookhandler.service.GitLabWebhookService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class WebhookController {
 
-    private final WebhookService webhookService;
+    private final GitLabWebhookService gitLabWebhookService;
 
     /**
-     * Accepts GitLab webhook events.
-     * GitLab sends the event type in the header X-Gitlab-Event.
-     * Optionally secured by X-Gitlab-Token.
+     * GitLab webhook endpoint.
+     * Header X-Gitlab-Event contains the event type.
+     * Header X-Gitlab-Token contains the secret (optional).
      */
     @PostMapping("/gitlab")
     public ResponseEntity<String> handleGitLabWebhook(
@@ -28,10 +27,7 @@ public class WebhookController {
             @RequestBody JsonNode payload) {
 
         log.info("Received GitLab webhook. Event: {}", eventType);
-        log.debug("Payload: {}", payload);
-
-        webhookService.process(eventType, token, payload);
-
+        gitLabWebhookService.process(eventType, token, payload);
         return ResponseEntity.ok("Webhook processed");
     }
 }

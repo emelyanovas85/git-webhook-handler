@@ -1,15 +1,19 @@
 spring:
   application:
-    name: gitlab-webhook-handler
+    name: webhook-handler
 
 server:
   port: 8080
 
-gitlab:
-  webhook:
-    # Set this to your GitLab webhook secret token for security
-    # Can also be set via environment variable: GITLAB_WEBHOOK_SECRET_TOKEN=mysecret
-    secret-token: ${GITLAB_WEBHOOK_SECRET_TOKEN:}
+webhook:
+  gitlab:
+    # GitLab sends token in X-Gitlab-Token header (plain text)
+    # Set via env: WEBHOOK_GITLAB_SECRET_TOKEN=mysecret
+    secret-token: ${WEBHOOK_GITLAB_SECRET_TOKEN:}
+  github:
+    # GitHub signs payload with HMAC-SHA256, sent in X-Hub-Signature-256 header
+    # Set via env: WEBHOOK_GITHUB_SECRET_TOKEN=mysecret
+    secret-token: ${WEBHOOK_GITHUB_SECRET_TOKEN:}
 
 management:
   endpoints:

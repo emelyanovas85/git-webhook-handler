@@ -1,86 +1,101 @@
-# GitLab Webhook Handler
+# Webhook Handler
 
-Spring Boot приложение для приёма и обработки webhook-событий от GitLab.
+Spring Boot приложение для приёма и обработки webhook-событий от **GitLab** и **GitHub**.
 
 ## Технологии
 
-- **Java 21**
-- **Spring Boot 4.0.6**
-- **Spring Framework 7.0.7**
+- **Java 21** + **Spring Boot 4.0.6** + **Spring Framework 7.0.7**
 - **Gradle 8.14** (Kotlin DSL)
-- Spring Web MVC, Spring Validation, Spring Actuator
-- Lombok 1.18.46, Jackson
+- Spring Web MVC, Validation, Actuator, Lombok, Jackson
 
 ## Архитектура
 
-Проект использует паттерн **Chain of Responsibility** — каждый тип события обрабатывается своим `GitLabEventHandler`.
+```
+┌─────────────────────────────────────────────────────────┐
+│                    REST Controllers                     │
+│  POST /api/webhook/gitlab   POST /api/webhook/github    │
+└──────────────┬──────────────────────────┬──────────────┘
+               │                          │
+               ▼                          ▼
+  GitLabWebhookService          GitHubWebhookService
+  (X-Gitlab-Token)              (HMAC-SHA256 signature)
+               │                          │
+               ▼                          ▼
+  [GitLabEventHandler]          [GitHubEventHandler]
+   ├─ PushEventHandler           ├─ GitHubPushEventHandler
+   ├─ MergeRequestEventHandler   ├─ GitHubPullRequestEventHandler
+   ├─ PipelineEventHandler       ├─ GitHubWorkflowRunEventHandler
+   └─ IssueEventHandler          └─ GitHubIssuesEventHandler
+```
 
-```
-POST /api/webhook/gitlab
-        │
-        ▼
-WebhookController
-        │
-        ▼
-WebhookService  ─── проверка токена безопасности
-        │
-        ▼
-[GitLabEventHandler]  ─── выбирает нужный обработчик
-   ├── PushEventHandler          (Push Hook)
-   ├── MergeRequestEventHandler  (Merge Request Hook)
-   ├── PipelineEventHandler      (Pipeline Hook)
-   └── IssueEventHandler         (Issue Hook)
-```
+Оба набора хендлеров реализуют общий интерфейс `WebhookEventHandler`.
+
+## Эндпоинты
+
+| Метод | URL | Источник |
+|-------|-----|----------|
+| POST  | `/api/webhook/gitlab`  | GitLab  |
+| POST  | `/api/webhook/github`  | GitHub  |
+| GET   | `/actuator/health`     | —       |
 
 ## Запуск
 
 ```bash
+# Без токенов (только для разработки)
+./gradlew bootRun
+
+# С токенами
+WEBHOOK_GITLAB_SECRET_TOKEN=gl-secret \
+WEBHOOK_GITHUB_SECRET_TOKEN=gh-secret \
 ./gradlew bootRun
 ```
 
-Либо с секретным токеном:
+## Настройка GitLab Webhook
 
-```bash
-GITLAB_WEBHOOK_SECRET_TOKEN=mysecret ./gradlew bootRun
-```
+1. Project → **Settings → Webhooks → Add new webhook**
+2. URL: `https://your-server:8080/api/webhook/gitlab`
+3. Secret token: значение `WEBHOOK_GITLAB_SECRET_TOKEN`
+4. Триггеры: Push, Merge Request, Pipeline, Issues
 
-## Эндпоинты
+## Настройка GitHub Webhook
 
-| Метод | URL | Описание |
-|-------|-----|----------|
-| POST  | `/api/webhook/gitlab` | Приём GitLab webhook |
-| GET   | `/actuator/health`    | Healthcheck |
-| GET   | `/actuator/info`      | Информация о приложении |
+1. Repository → **Settings → Webhooks → Add webhook**
+2. Payload URL: `https://your-server:8080/api/webhook/github`
+3. Content type: `application/json`
+4. Secret: значение `WEBHOOK_GITHUB_SECRET_TOKEN`
+5. Триггеры: Push, Pull requests, Workflow runs, Issues
 
-## Настройка GitLab
-
-1. Откройте GitLab → Settings → Webhooks
-2. URL: `http://your-server:8080/api/webhook/gitlab`
-3. Secret Token: значение из `GITLAB_WEBHOOK_SECRET_TOKEN`
-4. Выберите нужные события: Push, Merge Request, Pipeline, Issues
-5. Нажмите **Add webhook**
+> GitHub подписывает тело запроса через **HMAC-SHA256** и передаёт подпись
+> в заголовке `X-Hub-Signature-256`. Приложение автоматически проверяет её.
 
 ## Поддерживаемые события
 
-| X-Gitlab-Event Header  | Handler                     |
-|------------------------|-----------------------------|
-| `Push Hook`            | `PushEventHandler`          |
-| `Merge Request Hook`   | `MergeRequestEventHandler`  |
-| `Pipeline Hook`        | `PipelineEventHandler`      |
-| `Issue Hook`           | `IssueEventHandler`         |
+### GitLab (`X-Gitlab-Event`)
+| Заголовок | Хендлер |
+|-----------|--------|
+| `Push Hook` | `PushEventHandler` |
+| `Merge Request Hook` | `MergeRequestEventHandler` |
+| `Pipeline Hook` | `PipelineEventHandler` |
+| `Issue Hook` | `IssueEventHandler` |
 
-## Добавление нового обработчика
+### GitHub (`X-GitHub-Event`)
+| Заголовок | Хендлер |
+|-----------|--------|
+| `push` | `GitHubPushEventHandler` |
+| `pull_request` | `GitHubPullRequestEventHandler` |
+| `workflow_run` | `GitHubWorkflowRunEventHandler` |
+| `issues` | `GitHubIssuesEventHandler` |
 
-Создайте класс, реализующий `GitLabEventHandler`, и добавьте `@Component`:
+## Добавление нового хендлера
 
 ```java
 @Slf4j
 @Component
-public class NoteEventHandler implements GitLabEventHandler {
+public class GitHubReleaseEventHandler implements GitHubEventHandler {
 
     @Override
     public boolean supports(String eventType) {
-        return "Note Hook".equalsIgnoreCase(eventType);
+        return "release".equalsIgnoreCase(eventType);
     }
 
     @Override
@@ -90,11 +105,7 @@ public class NoteEventHandler implements GitLabEventHandler {
 }
 ```
 
-Spring автоматически добавит его в список обработчиков.
-
-## Безопасность
-
-Если задан `GITLAB_WEBHOOK_SECRET_TOKEN`, каждый запрос проверяется на наличие заголовка `X-Gitlab-Token`. При несовпадении возвращается `401 Unauthorized`.
+Spring автоматически подхватит новый хендлер — ничего больше менять не нужно.
 
 ## Тесты
 

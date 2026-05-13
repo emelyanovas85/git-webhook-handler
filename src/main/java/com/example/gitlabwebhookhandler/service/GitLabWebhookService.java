@@ -8,15 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * @deprecated Use {@link GitLabWebhookService} or {@link GitHubWebhookService} directly.
- * Kept for backward compatibility.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Deprecated(since = "1.1.0", forRemoval = true)
-public class WebhookService {
+public class GitLabWebhookService {
 
     @Value("${webhook.gitlab.secret-token:}")
     private String secretToken;
@@ -24,16 +19,26 @@ public class WebhookService {
     private final List<GitLabEventHandler> handlers;
 
     public void process(String eventType, String token, JsonNode payload) {
+        validateToken(token);
+
+        if (eventType == null || eventType.isBlank()) {
+            log.warn("[GitLab] Received webhook without event type header");
+            return;
+        }
+
+        handlers.stream()
+                .filter(h -> h.supports(eventType))
+                .forEach(h -> {
+                    log.info("[GitLab] Handling event '{}' with {}", eventType, h.getClass().getSimpleName());
+                    h.handle(payload);
+                });
+    }
+
+    private void validateToken(String token) {
         if (secretToken != null && !secretToken.isBlank()) {
             if (!secretToken.equals(token)) {
                 throw new SecurityException("Invalid GitLab webhook token");
             }
         }
-        if (eventType == null || eventType.isBlank()) {
-            return;
-        }
-        handlers.stream()
-                .filter(h -> h.supports(eventType))
-                .forEach(h -> h.handle(payload));
     }
 }
