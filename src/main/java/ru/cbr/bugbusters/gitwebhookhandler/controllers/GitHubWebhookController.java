@@ -1,7 +1,8 @@
 package ru.cbr.bugbusters.gitwebhookhandler.controllers;
 
 import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.github.GitHubWebhookService;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,13 +73,11 @@ public class GitHubWebhookController {
                                               }
                                             }""")
                             }))
-            @RequestBody String rawBody,
-
-            @org.springframework.web.bind.annotation.RequestBody(required = false) ObjectNode ignored
+            @RequestBody String rawBody
     ) {
         log.info("Received GitHub webhook. Event: {}", eventType);
         try {
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            ObjectMapper mapper = new ObjectMapper();
             ObjectNode payload = (ObjectNode) mapper.readTree(rawBody);
             gitHubWebhookService.process(eventType, signature, rawBody, payload);
             return ResponseEntity.ok("Webhook processed");
