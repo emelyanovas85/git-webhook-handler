@@ -2,6 +2,7 @@ package ru.cbr.bugbusters.gitwebhookhandler.controllers;
 
 import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.gitlab.GitLabWebhookService;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class GitLabWebhookController {
 
     private final GitLabWebhookService gitLabWebhookService;
+    private final ObjectMapper objectMapper;
 
     @Operation(
             summary = "Принять GitLab webhook",
@@ -59,10 +61,16 @@ public class GitLabWebhookController {
                                               }
                                             }""")
                             }))
-            @RequestBody JsonNode payload) {
+            @RequestBody String rawPayload) {
 
         log.info("Received GitLab webhook. Event: {}", eventType);
-        gitLabWebhookService.process(eventType, payload);
-        return ResponseEntity.ok("Webhook processed");
+        try {
+            JsonNode payload = objectMapper.readTree(rawPayload);
+            gitLabWebhookService.process(eventType, payload);
+            return ResponseEntity.ok("Webhook processed");
+        } catch (Exception e) {
+            log.error("Failed to parse webhook payload", e);
+            return ResponseEntity.badRequest().body("Invalid JSON payload");
+        }
     }
 }
