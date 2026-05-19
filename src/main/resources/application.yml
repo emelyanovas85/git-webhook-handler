@@ -1,6 +1,18 @@
 spring:
   application:
     name: webhook-handler
+  datasource:
+    url: jdbc:h2:mem:reviewdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 server:
   port: 8080
@@ -23,3 +35,22 @@ springdoc:
     operations-sorter: alpha
     tags-sorter: alpha
     display-request-duration: true
+
+app:
+  gitlab:
+    url: ${GITLAB_URL:http://localhost}
+    token: ${GITLAB_TOKEN:changeme}
+    webhook-token: ${GITLAB_WEBHOOK_TOKEN:changeme}
+  review:
+    trigger-command: ${REVIEW_TRIGGER_COMMAND:review}
+    mr-rag-url: ${MR_RAG_URL:http://localhost:8081}
+  ai:
+    system-prompt: |
+      You are an experienced Java developer and code reviewer.
+      Analyze only the provided context and diff summary.
+      Reply concisely and in structured markdown format.
+      Use the following sections:
+      - What was found
+      - Why it matters
+      - What to fix
+      If there are no issues, state that explicitly.

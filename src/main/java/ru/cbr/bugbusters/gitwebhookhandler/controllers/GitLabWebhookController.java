@@ -1,10 +1,6 @@
 package ru.cbr.bugbusters.gitwebhookhandler.controllers;
 
-import ru.cbr.bugbusters.gitwebhookhandler.service.handlers.gitlab.GitLabWebhookService;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,62 +11,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.cbr.bugbusters.gitwebhookhandler.common.config.AppProperties;
+import ru.cbr.bugbusters.gitwebhookhandler.webhook.service.GitLabWebhookDispatcher;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/webhook")
+@RequestMapping("/api/v1/webhooks")
 @RequiredArgsConstructor
-@Tag(name = "GitLab Webhook", description = "Приём и обработка webhook-ов от GitLab")
+@Tag(name = "GitLab Webhook", description = "Receiving GitLab webhooks")
 public class GitLabWebhookController {
 
-    private final GitLabWebhookService gitLabWebhookService;
-    private final ObjectMapper objectMapper;
+    private final GitLabWebhookDispatcher dispatcher;
+    private final AppProperties appProperties;
 
-    @Operation(
-            summary = "Принять GitLab webhook",
-            description = "Принимает события от GitLab: Push, Merge Request, Pipeline, Issue."
-    )
+    @Operation(summary = "Accept GitLab webhook", description = "Handles Note Hook to trigger AI review on MR")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Webhook успешно обработан",
+            @ApiResponse(responseCode = "202", description = "Webhook accepted",
                     content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
-                            examples = @ExampleObject(value = "Webhook processed"))),
-            @ApiResponse(responseCode = "400", description = "Некорректный JSON в теле запроса")
+                            examples = @ExampleObject(value = "Accepted"))),
+            @ApiResponse(responseCode = "403", description = "Invalid webhook token")
     })
     @PostMapping("/gitlab")
     public ResponseEntity<String> handleGitLabWebhook(
-            @Parameter(description = "Тип события GitLab", example = "Push Hook")
             @RequestHeader(value = "X-Gitlab-Event", required = false) String eventType,
-
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Payload от GitLab",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            examples = {
-                                    @ExampleObject(name = "Push Hook", value = """
-                                            {
-                                              "ref": "refs/heads/main",
-                                              "user_name": "john.doe",
-                                              "total_commits_count": 3
-                                            }"""),
-                                    @ExampleObject(name = "Merge Request Hook", value = """
-                                            {
-                                              "object_attributes": {
-                                                "title": "Fix bug",
-                                                "state": "opened",
-                                                "source_branch": "feature/fix",
-                                                "target_branch": "main"
-                                              }
-                                            }""")
-                            }))
+            @RequestHeader(value = "X-Gitlab-Token", required = false) String token,
             @RequestBody String rawPayload) {
 
-        log.info("Received GitLab webhook. Event: {}", eventType);
-        try {
-            JsonNode payload = objectMapper.readTree(rawPayload);
-            gitLabWebhookService.process(eventType, payload);
-            return ResponseEntity.ok("Webhook processed");
-        } catch (Exception e) {
-            log.error("Failed to parse webhook payload", e);
-            return ResponseEntity.badRequest().body("Invalid JSON payload");
+        if (!appProperties.gitlab().webhookToken().equals(token)) {
+            log.warn("Rejected GitLab webhook due to invalid token");
+            return ResponseEntity.status(403).body("Forbidden");
         }
+
+        log.info("Accepted GitLab webhook. Event={}", eventType);
+        dispatcher.dispatch(eventType, rawPayload);
+        return ResponseEntity.accepted().body("Accepted");
     }
 }
