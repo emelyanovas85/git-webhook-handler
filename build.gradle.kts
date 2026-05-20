@@ -21,6 +21,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/release") }
 }
 
 extra["springAiVersion"] = "1.0.0"
