@@ -1,6 +1,6 @@
 plugins {
     java
-    id("org.springframework.boot") version "4.0.6"
+    id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -21,7 +21,6 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.spring.io/release") }
 }
 
 extra["springAiVersion"] = "1.0.0"
@@ -40,6 +39,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     runtimeOnly("com.h2database:h2")
 
+    // Spring AI 1.0.0 GA — в Maven Central, требует Spring Boot 3.4+ / 3.5+
     implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter")
     implementation("org.gitlab4j:gitlab4j-api:6.0.0")
     implementation("com.fasterxml.jackson.core:jackson-databind")
@@ -49,7 +49,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
