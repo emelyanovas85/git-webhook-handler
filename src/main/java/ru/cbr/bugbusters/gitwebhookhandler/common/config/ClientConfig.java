@@ -5,6 +5,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.client.RestClient;
 
 @Configuration
@@ -20,7 +21,14 @@ public class ClientConfig {
         return builder.build();
     }
 
+    /**
+     * @Lazy — бин создаётся только при первом обращении.
+     * Позволяет приложению стартовать без реального OPENAI_API_KEY
+     * (например, в CI/CD без LLM или при локальном тестировании).
+     * При реальном вызове review OPENAI_API_KEY должен быть задан через env.
+     */
     @Bean
+    @Lazy
     public ChatClient chatClient(OpenAiChatModel chatModel) {
         return ChatClient.builder(chatModel).build();
     }
