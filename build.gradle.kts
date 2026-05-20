@@ -21,10 +21,9 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.spring.io/milestone") }
 }
 
-extra["springAiVersion"] = "1.0.0-M6"
+extra["springAiVersion"] = "1.0.0"
 
 dependencyManagement {
     imports {
