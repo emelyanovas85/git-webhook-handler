@@ -15,13 +15,18 @@ spring:
     locations: classpath:db/migration
   ai:
     openai:
-      # Задаётся через переменную окружения OPENAI_API_KEY в runtime.
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      # Задаётся через переменную окружения OPENAI_API_KEY в runtime
+      # или через application-local.yml (локальный профиль).
       # placeholder 'dummy' позволяет приложению стартовать без реального ключа.
       api-key: ${OPENAI_API_KEY:dummy}
       chat:
         options:
           model: ${OPENAI_MODEL:gpt-4o-mini}
           temperature: 0.3
+        # Путь к endpoint completions — может отличаться у не-OpenAI провайдеров.
+        # Переопределяется в application-local.yml или через переменную окружения.
+        completions-path: ${OPENAI_COMPLETIONS_PATH:/v1/chat/completions}
 
 server:
   port: 8081
