@@ -22,7 +22,7 @@ public class GitHubPullRequestEventHandler implements GitHubEventHandler {
         String targetBranch = payload.path("pull_request").path("base").path("ref").asText("unknown");
         String author     = payload.path("pull_request").path("user").path("login").asText("unknown");
 
-        log.info("[GitHub PR] Action: {}, Title: '{}', State: {}, {}->{}, Author: {}",
+        log.info("[GitHub PR] Действие: {}, Заголовок: '{}', Статус: {}, {}->{}, Автор: {}",
                 action, title, state, sourceBranch, targetBranch, author);
 
         // TODO: add your business logic here

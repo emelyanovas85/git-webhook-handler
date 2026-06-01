@@ -22,7 +22,7 @@ public class GitHubWorkflowRunEventHandler implements GitHubEventHandler {
         String branch  = payload.path("workflow_run").path("head_branch").asText("unknown");
         String repo    = payload.path("repository").path("full_name").asText("unknown");
 
-        log.info("[GitHub WORKFLOW_RUN] Repo: {}, Workflow: '{}', Branch: {}, Status: {}, Conclusion: {}, Action: {}",
+        log.info("[GitHub WORKFLOW_RUN] Репозиторий: {}, Воркфлоу: '{}', Ветка: {}, Статус: {}, Результат: {}, Действие: {}",
                 repo, name, branch, status, conclusion, action);
 
         // TODO: add your business logic here

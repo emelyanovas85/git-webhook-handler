@@ -20,7 +20,7 @@ public class GitHubIssuesEventHandler implements GitHubEventHandler {
         String author = payload.path("issue").path("user").path("login").asText("unknown");
         String repo   = payload.path("repository").path("full_name").asText("unknown");
 
-        log.info("[GitHub ISSUES] Repo: {}, Action: {}, Title: '{}', Author: {}",
+        log.info("[GitHub ISSUES] Репозиторий: {}, Действие: {}, Заголовок: '{}', Автор: {}",
                 repo, action, title, author);
 
         // TODO: add your business logic here

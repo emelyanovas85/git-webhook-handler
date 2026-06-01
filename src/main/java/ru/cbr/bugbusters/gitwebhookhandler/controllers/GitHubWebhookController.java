@@ -76,7 +76,7 @@ public class GitHubWebhookController {
 
             @org.springframework.web.bind.annotation.RequestBody(required = false) ObjectNode ignored
     ) {
-        log.info("Received GitHub webhook. Event: {}", eventType);
+        log.info("Получен GitHub webhook. Тип события: {}", eventType);
         try {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             ObjectNode payload = (ObjectNode) mapper.readTree(rawBody);

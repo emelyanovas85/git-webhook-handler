@@ -21,7 +21,7 @@ public class PipelineEventHandler implements GitLabEventHandler {
         long     duration = attrs.path("duration").asLong(0);
         String   project  = payload.path("project").path("name").asText("unknown");
 
-        log.info("[GitLab PIPELINE] Project: {}, Branch: {}, Status: {}, Duration: {}s",
+        log.info("[GitLab PIPELINE] Проект: {}, Ветка: {}, Статус: {}, Длительность: {}с",
                 project, ref, status, duration);
 
         // TODO: add your business logic here

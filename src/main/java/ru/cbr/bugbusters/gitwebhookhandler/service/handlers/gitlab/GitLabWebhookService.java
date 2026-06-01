@@ -22,14 +22,14 @@ public class GitLabWebhookService {
         validateToken(token);
 
         if (eventType == null || eventType.isBlank()) {
-            log.warn("[GitLab] Received webhook without event type header");
+            log.warn("[GitLab] Получен webhook без заголовка типа события");
             return;
         }
 
         handlers.stream()
                 .filter(h -> h.supports(eventType))
                 .forEach(h -> {
-                    log.info("[GitLab] Handling event '{}' with {}", eventType, h.getClass().getSimpleName());
+                    log.info("[GitLab] Обработка события '{}' обработчиком {}", eventType, h.getClass().getSimpleName());
                     h.handle(payload);
                 });
     }

@@ -72,7 +72,7 @@ public class GitLabWebhookController {
                             }))
             @RequestBody JsonNode payload) {
 
-        log.info("Received GitLab webhook. Event: {}", eventType);
+        log.info("Получен GitLab webhook. Тип события: {}", eventType);
         try {
             gitLabWebhookService.process(eventType, token, payload);
             return ResponseEntity.ok("Webhook processed");

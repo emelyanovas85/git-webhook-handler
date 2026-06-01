@@ -26,14 +26,14 @@ public class GitHubWebhookService {
         validateSignature(signature, rawBody);
 
         if (eventType == null || eventType.isBlank()) {
-            log.warn("[GitHub] Received webhook without event type header");
+            log.warn("[GitHub] Получен webhook без заголовка типа события");
             return;
         }
 
         handlers.stream()
                 .filter(h -> h.supports(eventType))
                 .forEach(h -> {
-                    log.info("[GitHub] Handling event '{}' with {}", eventType, h.getClass().getSimpleName());
+                    log.info("[GitHub] Обработка события '{}' обработчиком {}", eventType, h.getClass().getSimpleName());
                     h.handle(payload);
                 });
     }

@@ -20,7 +20,7 @@ public class PushEventHandler implements GitLabEventHandler {
         String userName    = payload.path("user_name").asText("unknown");
         int    commitCount = payload.path("total_commits_count").asInt(0);
 
-        log.info("[GitLab PUSH] Project: {}, Branch: {}, Author: {}, Commits: {}",
+        log.info("[GitLab PUSH] Проект: {}, Ветка: {}, Автор: {}, Коммитов: {}",
                 projectName, ref, userName, commitCount);
 
         // TODO: add your business logic here

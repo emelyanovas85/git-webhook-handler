@@ -20,7 +20,7 @@ public class GitHubPushEventHandler implements GitHubEventHandler {
         String pusher     = payload.path("pusher").path("name").asText("unknown");
         int    commits    = payload.path("commits").size();
 
-        log.info("[GitHub PUSH] Repo: {}, Branch: {}, Pusher: {}, Commits: {}",
+        log.info("[GitHub PUSH] Репозиторий: {}, Ветка: {}, Автор: {}, Коммитов: {}",
                 repoName, ref, pusher, commits);
 
         // TODO: add your business logic here

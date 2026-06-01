@@ -20,7 +20,7 @@ public class IssueEventHandler implements GitLabEventHandler {
         String   action = attrs.path("action").asText("unknown");
         String   author = payload.path("user").path("name").asText("unknown");
 
-        log.info("[GitLab ISSUE] Action: {}, Title: '{}', Author: {}", action, title, author);
+        log.info("[GitLab ISSUE] Действие: {}, Заголовок: '{}', Автор: {}", action, title, author);
 
         // TODO: add your business logic here
     }

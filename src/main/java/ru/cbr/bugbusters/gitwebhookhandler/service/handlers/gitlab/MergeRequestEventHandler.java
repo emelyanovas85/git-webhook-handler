@@ -22,7 +22,7 @@ public class MergeRequestEventHandler implements GitLabEventHandler {
         String   targetBranch = attrs.path("target_branch").asText("unknown");
         String   authorName   = payload.path("user").path("name").asText("unknown");
 
-        log.info("[GitLab MR] Title: '{}', State: {}, {}->{}, Author: {}",
+        log.info("[GitLab MR] Заголовок: '{}', Статус: {}, {}->{}, Автор: {}",
                 title, state, sourceBranch, targetBranch, authorName);
 
         // TODO: add your business logic here
