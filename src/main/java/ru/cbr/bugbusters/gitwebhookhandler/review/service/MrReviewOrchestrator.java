@@ -34,7 +34,7 @@ public class MrReviewOrchestrator {
 
     @Async("reviewExecutor")
     public void runReview(ReviewTriggerCommand command) {
-        log.info("Starting async review for project={}, mrIid={}", command.projectId(), command.mrIid());
+        log.info("Запуск асинхронного ревью для project={}, mrIid={}", command.projectId(), command.mrIid());
 
         List<String> contexts = graphServiceClient.fetchContexts(command);
         if (contexts.isEmpty()) {

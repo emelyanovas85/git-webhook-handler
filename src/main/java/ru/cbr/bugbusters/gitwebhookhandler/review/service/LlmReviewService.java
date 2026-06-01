@@ -41,7 +41,7 @@ public class LlmReviewService {
                     .content();
             return GroupReviewResult.success(index, response == null ? "No issues found." : response);
         } catch (Exception e) {
-            log.error("LLM request failed for context index={}", index, e);
+            log.error("Ошибка LLM-запроса для контекста index={}", index, e);
             return GroupReviewResult.failure(index, e.getMessage());
         }
     }

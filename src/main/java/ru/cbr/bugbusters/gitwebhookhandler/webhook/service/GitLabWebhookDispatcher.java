@@ -25,9 +25,9 @@ public class GitLabWebhookDispatcher {
                 mergeRequestHookHandler.handle(payload);
                 return;
             }
-            log.debug("Ignoring unsupported GitLab event: {}", eventType);
+            log.debug("Игнорируется неподдерживаемое событие GitLab: {}", eventType);
         } catch (Exception e) {
-            log.error("Failed to dispatch GitLab webhook event={}", eventType, e);
+            log.error("Ошибка при диспетчеризации события GitLab event={}", eventType, e);
         }
     }
 }

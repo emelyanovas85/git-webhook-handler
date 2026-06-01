@@ -58,12 +58,12 @@ public class GitLabWebhookSubscriber extends WebhookSubscriberClient {
         Map<String, Object> rawPayload = payload.payload();
 
         if (rawPayload == null) {
-            log.warn("Received webhook with null payload, eventType={}, eventId={}",
+            log.warn("Получен webhook с пустым payload, eventType={}, eventId={}",
                     eventType, payload.eventId());
             return;
         }
 
-        log.info("Received webhook from distributor: eventId={}, eventType={}",
+        log.info("Получен webhook от дистрибьютора: eventId={}, eventType={}",
                 payload.eventId(), eventType);
 
         try {
@@ -72,7 +72,7 @@ public class GitLabWebhookSubscriber extends WebhookSubscriberClient {
             String rawJson = objectMapper.writeValueAsString(rawPayload);
             dispatcher.dispatch(eventType, rawJson);
         } catch (Exception e) {
-            log.error("Failed to process webhook eventId={}, eventType={}: {}",
+            log.error("Ошибка обработки webhook eventId={}, eventType={}: {}",
                     payload.eventId(), eventType, e.getMessage(), e);
         }
     }

@@ -16,9 +16,9 @@ public class GitLabNotesPublisher {
     public void postNote(Long projectId, Long mrIid, String body) {
         try {
             gitLabApi.getNotesApi().createMergeRequestNote(projectId, mrIid, body, null, null);
-            log.info("Posted review note to project={}, mrIid={}", projectId, mrIid);
+            log.info("Комментарий с результатами ревью опубликован: project={}, mrIid={}", projectId, mrIid);
         } catch (GitLabApiException e) {
-            log.error("Failed to post review note to project={}, mrIid={}", projectId, mrIid, e);
+            log.error("Ошибка публикации комментария ревью: project={}, mrIid={}", projectId, mrIid, e);
         }
     }
 }

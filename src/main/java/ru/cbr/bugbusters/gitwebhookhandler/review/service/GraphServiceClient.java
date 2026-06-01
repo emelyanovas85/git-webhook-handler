@@ -38,13 +38,13 @@ public class GraphServiceClient {
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {});
             if (contexts == null || contexts.isEmpty()) {
-                log.warn("Graph-service returned empty contexts for MR {}", command.mrIid());
+                log.warn("Граф-сервис вернул пустой список контекстов для MR {}", command.mrIid());
                 return List.of();
             }
-            log.info("Graph-service returned {} context(s) for MR {}", contexts.size(), command.mrIid());
+            log.info("Граф-сервис вернул {} контекст(ов) для MR {}", contexts.size(), command.mrIid());
             return contexts;
         } catch (Exception e) {
-            log.error("Failed to fetch contexts from graph-service for MR {}: {}", command.mrIid(), e.getMessage(), e);
+            log.error("Ошибка получения контекстов от граф-сервиса для MR {}: {}", command.mrIid(), e.getMessage(), e);
             return List.of();
         }
     }

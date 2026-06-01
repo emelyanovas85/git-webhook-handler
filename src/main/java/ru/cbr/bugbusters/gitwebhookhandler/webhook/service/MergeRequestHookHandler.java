@@ -20,7 +20,7 @@ public class MergeRequestHookHandler {
 
     public void handle(MergeRequestHookPayload payload) {
         if (payload.objectAttributes() == null) {
-            log.debug("Skipping MR hook without object_attributes");
+            log.debug("Пропуск MR hook: отсутствует object_attributes");
             return;
         }
 
@@ -29,7 +29,7 @@ public class MergeRequestHookHandler {
 
         // Запускаем ревью только для открытия/переоткрытия/апрува MR
         if (!isReviewableAction(action, state)) {
-            log.debug("Skipping MR hook: action={}, state={}", action, state);
+            log.debug("Пропуск MR hook: action={}, state={}", action, state);
             return;
         }
 
@@ -37,7 +37,7 @@ public class MergeRequestHookHandler {
         Long mrIid     = payload.objectAttributes().iid();
 
         if (projectId == null || mrIid == null) {
-            log.warn("MR hook missing projectId or mrIid, skipping");
+            log.warn("MR hook не содержит projectId или mrIid, пропускается");
             return;
         }
 
@@ -56,7 +56,7 @@ public class MergeRequestHookHandler {
                 payload.user() != null ? payload.user().username() : "gitlab"
         );
 
-        log.info("Triggering review: project={}, mrIid={}, action={}", projectId, mrIid, action);
+        log.info("Запуск ревью: project={}, mrIid={}, action={}", projectId, mrIid, action);
         mrReviewOrchestrator.runReview(command);
     }
 
