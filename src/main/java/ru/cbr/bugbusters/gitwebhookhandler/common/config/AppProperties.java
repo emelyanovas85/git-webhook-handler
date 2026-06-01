@@ -8,10 +8,14 @@ public record AppProperties(
         GraphServiceProperties graphService,
         AiProperties ai
 ) {
-    public record GitLabProperties(String url, String token, String webhookToken) {}
+    /**
+     * Настройки GitLab API.
+     * token — Personal Access Token для публикации комментариев в MR.
+     */
+    public record GitLabProperties(String url, String token) {}
 
     /**
-     * graphServiceUrl — базовый URL граф-сервиса.
+     * Базовый URL граф-сервиса.
      * Пример: http://graph-service:8090
      */
     public record GraphServiceProperties(String url) {}
